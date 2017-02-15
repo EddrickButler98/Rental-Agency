@@ -1,5 +1,6 @@
 import time
 import fileinput
+import os
 
 print("Eddrick welcomes you to the MiTunes Music Rental Shop")
 time.sleep(2)
@@ -8,7 +9,7 @@ print("Please Wait.....")
 time.sleep(3)
 print(" ")
 one_R = input("Are You Renting, Returning, or Replacing: ")
-if one_R == "replacing":
+if one_R == "Replacing":
 	replace = input("Which album do you want to replace(Format: 'Artist Name - Album Name')?: ")
 	replacement_value = float(5.00)
 	if replace == "Dangerous":
@@ -72,7 +73,7 @@ if one_R == "replacing":
 		year_released = int(2015)
 		sales_tax = 0.07
 
-	with open('inventory.txt', 'r+') as f:
+	with open('inventory.py', 'r+') as f:
     		content = f.read()
     		f.seek(0)
     		f.truncate()
@@ -87,13 +88,14 @@ if one_R == "replacing":
 	print("Change Leftover:" + '${:0.2f}'.format(change_left))
 	time.sleep(2)
 	print("Thank you and please come back again!")
-	receipt = open('replacements_log.txt', 'a')
+	receipt = open('replacements_log.py', 'a')
 	receipt.write("\t\tReplaced " + str(replace) + " with " + str(replacing_with) + "\n")
-	receipt.write("\t\tAmount Paid.................." + '${:0.2f}'.format(pay) + "\n")
+	receipt.write("\t\tReplacement Price........" + '${:0.2f}'.format(total) + "\n")
+	receipt.write("\t\tAmount Paid................." + '${:0.2f}'.format(pay) + "\n")
 	receipt.write("\t\tChange Left..................." + '${:0.2f}'.format(change_left) + "\n")
 	exit()
 
-elif one_R == "renting":
+elif one_R == "Renting":
 	while True:
 		print(
 			"\tMichael Jackson - Dangerous - Released in 1991 ---------- $15.00\n",
@@ -150,16 +152,16 @@ elif one_R == "renting":
 
 	invent = input("Do you want this in your inventory?: ")
 	if invent == "yes":
-		i = open('inventory.txt', 'a')
+		i = open('inventory.py', 'a')
 		i.write("\t\t" + str(artists_name) + ' - ' + str(users_album) + "\n")
 		i.close()
 
-elif one_R == "returning":
+elif one_R == "Returning":
 	while True:
 		time.sleep(2)
 		returned = input("Which album are you returning? (Notice: CHECK YOUR INVENTORY!): ")
-		if str(returned) in open('inventory.txt').read():
-			for line in fileinput.input("inventory.txt", inplace=True):
+		if str(returned) in open('inventory.py').read():
+			for line in fileinput.input("inventory.py", inplace=True):
 				if returned in line:
 					continue
 				print(line, end='')
@@ -186,21 +188,31 @@ payment_type = input("Cash, Credit, or Debit?: ")
 if payment_type == "Cash":
 	total = str(renting_price + sales_tax)
 	print("Total: $" + str(total))
-	users_paying = input("Amount You're Willing to Pay?(Format: '$50 or 50.00') : $")
+	users_paying = input("Amount You're Willing to Pay?(Format: '$50 or $50.00') : $")
 	change = float(users_paying) - float(total)
 	time.sleep(2)
-	print("\t\tAlbum Name...................... " + str(users_album) + "\n")
-	print("\t\tArtist Name......................... " + str(artists_name) + "\n")
-	print("\t\tAlbum Renting Price......... " + '${:0.2f}'.format(renting_price) + "\n")
-	print("\t\tAmount Paid....................... $" + str(users_paying) + "\n")
-	print("\t\tChange Back....................... " + '${:0.2f}'.format(change) + "\n")
-	print("\t\tYear Released/Releasing..... Year " + str(year_released) + "\n")
+	print("\t\tAlbum Name...................... " + str(users_album))
+	print("\t\tArtist Name......................... " + str(artists_name))
+	print("\t\tAlbum Renting Price......... " + '${:0.2f}'.format(renting_price))
+	print("\t\tAmount Paid....................... $" + str(users_paying))
+	print("\t\tChange Back....................... " + '${:0.2f}'.format(change))
+	print("\t\tYear Released/Releasing..... Year " + str(year_released))
+	print("\t\tNumber of Days Rented..." + str(number_of_days_renting) + " days")
+	view_transactions = input("Would you like to view recent transactions: ")
+	if view_transactions == "yes":
+		with open('receipt.py', 'r') as receipts:
+			for line in receipts:
+				print(line)
 	receipt = open('receipt.py', 'a')
 	receipt.write("\t\tMiTunes Music Rental Shop\n\n")
 	receipt.write("\t\tAlbum Name......................" + str(users_album) + "\n")
 	receipt.write("\t\tArtist Name........................." + str(artists_name) + "\n")
 	receipt.write("\t\tAlbum Renting Price......... " + '${:0.2f}'.format(renting_price) + "\n")
+	receipt.write("\t\tAmount Paid...................... $" + str(users_paying) + "\n")
+	receipt.write("\t\tTax....................................." + '${:0.2f}'.format(sales_tax) + "\n")
+	receipt.write("\t\tChange Back......................" + '${:0.2f}'.format(change) + "\n")
 	receipt.write("\t\tYear Released/Releasing....." + str(year_released) + "\n")
+	receipt.write("\t\tDays Renting......................." + str(number_of_days_renting) + " days")
 	receipt.write("\n\n")
 	receipt.close()
 
@@ -218,13 +230,22 @@ elif payment_type == "Debit":
 		print("Album Renting Price........ " + '${:0.2f}'.format(renting_price))
 		print("Year Released/Releasing.... Year " + str(year_released))
 		print("Number of Days You Are Renting The Album For........ " + str(number_of_days_renting) + " days")
-		receipt = open('receipt.txt', 'a')
+		view_transactions = input("Would you like to view recent transactions: ")
+		if view_transactions == "yes":
+			with open('receipt.py', 'r') as receipts:
+				print("Just a minute.........")
+				time.sleep(3)
+				for line in receipts:
+					print(line)
+		receipt = open('receipt.py', 'a')
 		receipt.write("\t\tMiTunes Music Rental Shop\n\n")
 		receipt.write("\t\tAlbum Name......................" + str(users_album) + "\n")
 		receipt.write("\t\tArtist Name........................." + str(artists_name) + "\n")
-		receipt.write("\t\tAlbum Renting Price......... " + str(renting_price) + "\n")
+		receipt.write("\t\tAlbum Renting Price......... " + '${:0.2f}'.format(renting_price) + "\n")
+		receipt.write("\t\tTax....................................." + '${:0.2f}'.format(sales_tax) + "\n")
+		receipt.write("\t\tChange Back......................" + '${:0.2f}'.format(0) + "\n")
 		receipt.write("\t\tYear Released/Releasing....." + str(year_released) + "\n")
-		receipt.write("\t\tDays Renting........................" + str(number_of_days_renting) +  " days\n")
+		receipt.write("\t\tDays Renting......................." + str(number_of_days_renting) + " days")
 		receipt.write("\n\n")
 		receipt.close()
 
@@ -239,13 +260,20 @@ elif payment_type == "Debit":
 		print("Album Renting Price......." + '${:0.2f}'.format(renting_price))
 		print("Album's Release Year........" + str(year_released))
 		print("Number of Days Rented..." + str(number_of_days_renting) + " days")
-		receipt = open('receipt.txt', 'a')
+		view_transactions = input("Would you like to view recent transactions: ")
+		if view_transactions == "yes":
+			with open('receipt.py', 'r') as receipts:
+				for line in receipts:
+					print(line)
+		receipt = open('receipt.py', 'a')
 		receipt.write("\t\tMiTunes Music Rental Shop\n\n")
 		receipt.write("\t\tAlbum Name......................" + str(users_album) + "\n")
 		receipt.write("\t\tArtist Name........................." + str(artists_name) + "\n")
-		receipt.write("\t\tAlbum Renting Price......... " + str(renting_price) + "\n")
+		receipt.write("\t\tAlbum Renting Price......... " + '${:0.2f}'.format(renting_price) + "\n")
+		receipt.write("\t\tTax....................................." + '${:0.2f}'.format(sales_tax) + "\n")
+		receipt.write("\t\tChange Back......................" + '${:0.2f}'.format(0) + "\n")
 		receipt.write("\t\tYear Released/Releasing....." + str(year_released) + "\n")
-		receipt.write("\t\tDays Renting........................" + str(number_of_days_renting) +  " days\n")
+		receipt.write("\t\tDays Renting......................." + str(number_of_days_renting) + " days")
 		receipt.write("\n\n")
 		receipt.close()
 
@@ -264,13 +292,20 @@ elif payment_type == "Credit":
 		print("Album Renting Price......." + '${:0.2f}'.format(renting_price))
 		print("Album's Release Year........" + str(year_released))
 		print("Number of Days Rented..." + str(number_of_days_renting) + " days")
-		receipt = open('receipt.txt', 'a')
+		view_transactions = input("Would you like to view recent transactions: ")
+		if view_transactions == "yes":
+			with open('receipt.py', 'r') as receipts:
+				for line in receipts:
+					print(line)
+		receipt = open('receipt.py', 'a')
 		receipt.write("\t\tMiTunes Music Rental Shop\n\n")
 		receipt.write("\t\tAlbum Name......................" + str(users_album) + "\n")
 		receipt.write("\t\tArtist Name........................." + str(artists_name) + "\n")
-		receipt.write("\t\tAlbum Renting Price......... " + str(renting_price) + "\n")
+		receipt.write("\t\tAlbum Renting Price......... " + '${:0.2f}'.format(renting_price) + "\n")
+		receipt.write("\t\tTax....................................." + '${:0.2f}'.format(sales_tax) + "\n")
+		receipt.write("\t\tChange Back......................" + '${:0.2f}'.format(0) + "\n")
 		receipt.write("\t\tYear Released/Releasing....." + str(year_released) + "\n")
-		receipt.write("\t\tDays Renting........................" + str(number_of_days_renting) +  " days\n")
+		receipt.write("\t\tDays Renting......................." + str(number_of_days_renting) + " days")
 		receipt.write("\n\n")
 		receipt.close()
 
@@ -286,14 +321,22 @@ elif payment_type == "Credit":
 		print("Album Renting Price......." + '${:0.2f}'.format(renting_price))
 		print("Album's Release Year........" + str(year_released))
 		print("Number of Days Rented..." + str(number_of_days_renting) + " days")
-		receipt = open('receipt.txt', 'a')
+		view_transactions = input("Would you like to view recent transactions: ")
+		if view_transactions == "yes":
+			with open('receipt.py', 'r') as receipts:
+				for line in receipts:
+					print(line)
+		receipt = open('receipt.py', 'a')
 		receipt.write("\t\tMiTunes Music Rental Shop\n\n")
 		receipt.write("\t\tAlbum Name......................" + str(users_album) + "\n")
 		receipt.write("\t\tArtist Name........................." + str(artists_name) + "\n")
-		receipt.write("\t\tAlbum Renting Price......... " + str(renting_price) + "\n")
+		receipt.write("\t\tAlbum Renting Price......... " + '${:0.2f}'.format(renting_price) + "\n")
+		receipt.write("\t\tTax....................................." + '${:0.2f}'.format(sales_tax) + "\n")
+		receipt.write("\t\tChange Back......................" + '${:0.2f}'.format(0) + "\n")
 		receipt.write("\t\tYear Released/Releasing....." + str(year_released) + "\n")
-		receipt.write("\t\tDays Renting........................" + str(number_of_days_renting) +  " days\n")
+		receipt.write("\t\tDays Renting......................." + str(number_of_days_renting) + " days")
 		receipt.write("\n\n")
+		receipt.close()
 
 	elif version == "Capital One":
 		number = input("Enter the last 4-digits of your Capital One card number: ")
@@ -307,12 +350,19 @@ elif payment_type == "Credit":
 		print("Album Renting Price......." + '${:0.2f}'.format(renting_price))
 		print("Album's Release Year........" + str(year_released))
 		print("Number of Days Rented..." + str(number_of_days_renting) + " days")
-		receipt = open('receipt.txt', 'a')
+		view_transactions = input("Would you like to view recent transactions: ")
+		if view_transactions == "yes":
+			with open('receipt.py', 'r') as receipts:
+				for line in receipts:
+					print(line)
+		receipt = open('receipt.py', 'a')
 		receipt.write("\t\tMiTunes Music Rental Shop\n\n")
 		receipt.write("\t\tAlbum Name......................" + str(users_album) + "\n")
 		receipt.write("\t\tArtist Name........................." + str(artists_name) + "\n")
-		receipt.write("\t\tAlbum Renting Price......... " + str(renting_price) + "\n")
+		receipt.write("\t\tAlbum Renting Price......... " + '${:0.2f}'.format(renting_price) + "\n")
+		receipt.write("\t\tTax....................................." + '${:0.2f}'.format(sales_tax) + "\n")
+		receipt.write("\t\tChange Back......................" + '${:0.2f}'.format(0) + "\n")
 		receipt.write("\t\tYear Released/Releasing....." + str(year_released) + "\n")
-		receipt.write("\t\tDays Renting........................" + str(number_of_days_renting) +  " days\n")
+		receipt.write("\t\tDays Renting......................." + str(number_of_days_renting) + " days")
 		receipt.write("\n\n")
 		receipt.close()
